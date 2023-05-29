@@ -1,9 +1,8 @@
+import time
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
-from tkinter.messagebox import showinfo
-from PIL import Image, ImageTk
-import time
+from PIL import Image
 import numpy as np
 import compression as cf
 from zoom import Zoom
@@ -89,7 +88,7 @@ class App(tk.Tk):
             return
         try:
             filename = self.file_path_label['text']
-            im = Image.open(filename)
+            image = Image.open(filename)
 
         except:
             tk.messagebox. \
@@ -97,8 +96,8 @@ class App(tk.Tk):
             return
 
         # create array of pixels from image
-        im = im.convert('L')
-        pixels = np.asarray(im)
+        image = image.convert('L')
+        pixels = np.asarray(image)
 
         #check if block size is too big
         if pixels.shape[0] < self.f or pixels.shape[1] < self.f:
@@ -109,14 +108,16 @@ class App(tk.Tk):
         cf.compress(pixels, self.f, self.d, self.alg)
         elapsed = round(time.time() - start, 2)
 
-        tk.messagebox.showinfo('Job Completed', f'Image saved ({self.alg} compression) in {elapsed}s')
+        tk.messagebox.showinfo(
+            'Job Completed', f'Image saved ({self.alg} compression) in {elapsed}s'
+        )
 
         # show results
         jpg_w = tk.Toplevel()
-        jpg_app = Zoom(jpg_w, path='new_img.jpg', title='Jpeg')
+        Zoom(jpg_w, path='new_img.jpg', title='Jpeg')
 
         bmp_w = tk.Toplevel()
-        bmp_app = Zoom(bmp_w, path=filename, title='Bitmap')
+        Zoom(bmp_w, path=filename, title='Bitmap')
 
 
 

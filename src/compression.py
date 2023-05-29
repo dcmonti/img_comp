@@ -1,6 +1,3 @@
-import time
-
-import numpy
 from scipy.fft import dctn, idctn, fft2, ifft2
 import numpy as np
 from PIL import Image

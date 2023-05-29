@@ -1,4 +1,3 @@
-import random
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
@@ -51,8 +50,6 @@ class Zoom(ttk.Frame):
         self.imscale = 1.0
         self.imageid = None
         self.delta = 0.75
-        width, height = self.image.size
-        minsize, maxsize = 5, 20
         self.text = self.canvas.create_text(0, 0, anchor='nw', text='')
         self.show_image()
         self.canvas.configure(scrollregion=self.canvas.bbox('all'))
