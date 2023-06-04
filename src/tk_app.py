@@ -23,7 +23,7 @@ class App(tk.Tk):
         )
         self.open_file_button.pack(expand=True)
         self.file_path_label = tk.Label(text='Please choose a file')
-        self.file_path_label.pack(padx=2, pady=2)
+        self.file_path_label.pack(padx=2, pady=10)
 
         # Set F parameter
         self.f_label = tk.Label(self, text="Enter chunk size", font=('Calibri 10'))
@@ -66,7 +66,11 @@ class App(tk.Tk):
         self.file_path_label['text'] = filename
 
     def comp_alg_switch(self):
-         self.alg = self.var_alg.get()
+        self.alg = self.var_alg.get()
+        if self.alg == 'fft':
+            tk.messagebox.showinfo(
+                'Info', f'fft mode is only for testing purpose, click \'OK\' to continue'
+            )
 
     def exec(self):
         start = time.time()

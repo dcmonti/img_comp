@@ -42,7 +42,7 @@ def compress(matrix, f, d, alg):
 
     #compression and decompression
     comp_matrix = jpeg_compression(matrix, f, d) if alg == 'dct' else fft_compression(matrix, f, d)
-
+    print(comp_matrix)
     #save image
     #cv2.imwrite('new_img.jpg',comp_matrix)
     comp_pic = Image.fromarray(comp_matrix)
