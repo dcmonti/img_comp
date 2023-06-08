@@ -52,21 +52,20 @@ def jpeg_compression(matrix, f, d):
 
     # apply dct on each f*f tile
     matrix = dctn(matrix, type=2, norm='ortho', axes=(2,3), workers=-1)
+
     # create mask for setting lower tile value to 0
     mask = freq_cut_mask(f, d)
 
     # multiply each tile for mask in order to cut lower frequencies
     matrix = np.einsum('ijkz,kz->ijkz',matrix,mask)
 
-    # inverse dct and reshape to original shape
+    # inverse dct
     matrix = idctn(matrix, type=2, norm='ortho', axes=(2,3), workers=-1)
-
 
     #return to normal shape
     matrix = reverse_reshape_matrix(matrix, f)
 
-    # round value between 0 and 255 (round to unsigned 8 bit integer)
-
+    # round value to int
     matrix = np.rint(matrix)
     return matrix
 
@@ -88,7 +87,7 @@ def fft_compression(matrix, f, d):
     matrix = ifft2(matrix, norm='ortho', axes=(2,3), workers=-1).real
     matrix = reverse_reshape_matrix(matrix, f)
 
-    # round value between 0 and 255 (round to unsigned 8 bit integer)
+    # round value to int
     matrix = np.rint(matrix)
 
     return matrix
