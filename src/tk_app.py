@@ -2,10 +2,10 @@ import time
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
-from PIL import Image
+from PIL import Image, ImageTk
 import numpy as np
 import compression as cf
-from zoom import Zoom
+from zoom import MainWindow
 
 
 class App(tk.Tk):
@@ -48,8 +48,8 @@ class App(tk.Tk):
         self.fft_radio = ttk.Radiobutton(self, text='Use fft', variable=self.var_alg, value='fft', command=self.comp_alg_switch)
         self.dct_radio.pack()
         self.fft_radio.pack()
-        # start compression
 
+        # start compression
         self.start = ttk.Button(self, text="Start", command=self.exec)
         self.start.pack(pady=10)
 
@@ -109,19 +109,30 @@ class App(tk.Tk):
                 showerror('Python Error', 'Error: Chunk size is too high')
             return
 
-        cf.compress(pixels, self.f, self.d, self.alg)
+        comp_matrix = cf.compress(pixels, self.f, self.d, self.alg)
         elapsed = round(time.time() - start, 2)
 
         tk.messagebox.showinfo(
             'Job Completed', f'Image saved ({self.alg} compression) in {elapsed}s'
         )
 
+        # save results
+        comp_pic = Image.fromarray(comp_matrix)
+        comp_pic = comp_pic.convert("L")
+        save_path_file = f'{filename[:-3]}jpg'
+        comp_pic.save(save_path_file)
+
         # show results
         jpg_w = tk.Toplevel()
-        Zoom(jpg_w, path='new_img.jpg', title='Jpeg')
+        width = jpg_w.winfo_screenwidth()
+        height = jpg_w.winfo_screenheight()
+        jpg_w.geometry(f'{int(width / 2)}x{int(height)}+0+0')
+
+        MainWindow(jpg_w, save_path_file, 'Jpeg')
 
         bmp_w = tk.Toplevel()
-        Zoom(bmp_w, path=filename, title='Bitmap')
+        bmp_w.geometry(f'{int(width / 2)}x{int(height)}+{int(width / 2)+1}+0')
+        MainWindow(bmp_w, filename, 'Bitmap')
 
 
 

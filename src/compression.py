@@ -17,6 +17,7 @@ def reshape_matrix(matrix, tile_size):
 def reverse_reshape_matrix(matrix, tile_size):
     height_tile, width_tile, _, _ = matrix.shape
     reshaped_matrix = matrix.swapaxes(1,2)
+
     reshaped_matrix = reshaped_matrix.reshape(
         height_tile * tile_size,
         width_tile * tile_size
@@ -34,7 +35,6 @@ def freq_cut_mask(f, d):
 
 
 def compress(matrix, f, d, alg):
-
     # remove pixel if not f multiple
     x_limit = matrix.shape[0] - (matrix.shape[0] % f)
     y_limit = matrix.shape[1] - (matrix.shape[1] % f)
@@ -43,9 +43,7 @@ def compress(matrix, f, d, alg):
     #compression and decompression
     comp_matrix = jpeg_compression(matrix, f, d) if alg == 'dct' else fft_compression(matrix, f, d)
     #save image
-    comp_pic = Image.fromarray(comp_matrix)
-    comp_pic = comp_pic.convert("L")
-    comp_pic.save('new_img.jpg')
+    return comp_matrix
 
 
 def jpeg_compression(matrix, f, d):
@@ -54,7 +52,6 @@ def jpeg_compression(matrix, f, d):
 
     # apply dct on each f*f tile
     matrix = dctn(matrix, type=2, norm='ortho', axes=(2,3), workers=-1)
-
     # create mask for setting lower tile value to 0
     mask = freq_cut_mask(f, d)
 
@@ -63,10 +60,14 @@ def jpeg_compression(matrix, f, d):
 
     # inverse dct and reshape to original shape
     matrix = idctn(matrix, type=2, norm='ortho', axes=(2,3), workers=-1)
+
+
+    #return to normal shape
     matrix = reverse_reshape_matrix(matrix, f)
 
     # round value between 0 and 255 (round to unsigned 8 bit integer)
-    matrix = matrix.astype(np.uint8)
+
+    matrix = np.rint(matrix)
     return matrix
 
 
@@ -88,5 +89,6 @@ def fft_compression(matrix, f, d):
     matrix = reverse_reshape_matrix(matrix, f)
 
     # round value between 0 and 255 (round to unsigned 8 bit integer)
-    matrix = matrix.astype(np.uint8)
+    matrix = np.rint(matrix)
+
     return matrix
