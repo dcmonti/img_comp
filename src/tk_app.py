@@ -34,7 +34,7 @@ class App(tk.Tk):
         self.f_input.pack(pady=5)
 
         # set d parameter
-        self.d_label = tk.Label(self, text="Enter frequency threshold", font=('Calibri 10'))
+        self.d_label = tk.Label(self, text="Enter frequency treshold", font=('Calibri 10'))
         self.d_label.pack()
         self.d = tk.IntVar()
         self.d.set(14)
@@ -94,6 +94,7 @@ class App(tk.Tk):
             filename = self.file_path_label['text']
             image = Image.open(filename)
 
+
         except:
             tk.messagebox. \
                 showerror('Python Error', f'No such file {filename}')
@@ -116,11 +117,9 @@ class App(tk.Tk):
             'Job Completed', f'Image saved ({self.alg} compression) in {elapsed}s'
         )
 
-        # save results
+        # build PIL image from matrix
         comp_pic = Image.fromarray(comp_matrix)
         comp_pic = comp_pic.convert("L")
-        save_path_file = f'{filename[:-4]}_f_{self.f}_d_{self.d}.jpg'
-        comp_pic.save(save_path_file)
 
         # show results
         jpg_w = tk.Toplevel()
@@ -128,11 +127,11 @@ class App(tk.Tk):
         height = jpg_w.winfo_screenheight()
         jpg_w.geometry(f'{int(width / 2)}x{int(height)}+0+0')
 
-        MainWindow(jpg_w, save_path_file, 'Jpeg')
+        MainWindow(jpg_w, comp_pic, 'After')
 
         bmp_w = tk.Toplevel()
         bmp_w.geometry(f'{int(width / 2)}x{int(height)}+{int(width / 2)+1}+0')
-        MainWindow(bmp_w, filename, 'Bitmap')
+        MainWindow(bmp_w, image, 'Before')
 
 
 

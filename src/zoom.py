@@ -22,13 +22,13 @@ class AutoScrollbar(ttk.Scrollbar):
 
 class CanvasImage:
     """ Display and zoom image """
-    def __init__(self, placeholder, path):
+    def __init__(self, placeholder, image):
         """ Initialize the ImageFrame """
         self.imscale = 1.0  # scale for the canvas image zoom, public for outer classes
         self.__delta = 1.3  # zoom magnitude
         self.__filter = Image.NEAREST  # could be: NEAREST, BILINEAR, BICUBIC and ANTIALIAS
         self.__previous_state = 0  # previous state of the keyboard
-        self.path = path  # path to the image, should be public for outer classes
+        self.path = ''  # path to the image, should be public for outer classes
         # Create ImageFrame in placeholder widget
         self.__imframe = ttk.Frame(placeholder)  # placeholder of the ImageFrame object
         # Vertical and horizontal scrollbars for canvas
@@ -60,7 +60,7 @@ class CanvasImage:
         Image.MAX_IMAGE_PIXELS = 1000000000  # suppress DecompressionBombError for the big image
         with warnings.catch_warnings():  # suppress DecompressionBombWarning
             warnings.simplefilter('ignore')
-            self.__image = Image.open(self.path)  # open image, but down't load it
+            self.__image = image  # open image, but down't load it
         self.imwidth, self.imheight = self.__image.size  # public for outer classes
         if self.imwidth * self.imheight > self.__huge_size * self.__huge_size and \
            self.__image.tile[0][0] == 'raw':  # only raw images could be tiled
@@ -72,7 +72,7 @@ class CanvasImage:
                            self.__image.tile[0][3]]  # list of arguments to the decoder
         self.__min_side = min(self.imwidth, self.imheight)  # get the smaller image side
         # Create image pyramid
-        self.__pyramid = [self.smaller()] if self.__huge else [Image.open(self.path)]
+        self.__pyramid = [self.smaller()] if self.__huge else [image]
         # Set ratio coefficient for image pyramid
         self.__ratio = max(self.imwidth, self.imheight) / self.__huge_size if self.__huge else 1.0
         self.__curr_img = 0  # current image from the pyramid
@@ -113,7 +113,7 @@ class CanvasImage:
             self.__tile[1][3] = band  # set band width
             self.__tile[2] = self.__offset + self.imwidth * i * 3  # tile offset (3 bytes per pixel)
             self.__image.close()
-            self.__image = Image.open(self.path)  # reopen / reset image
+            self.__image = image  # reopen / reset image
             self.__image.size = (self.imwidth, band)  # set size of the tile band
             self.__image.tile = [self.__tile]  # set tile
             cropped = self.__image.crop((0, 0, self.imwidth, band))  # crop tile band
@@ -185,7 +185,7 @@ class CanvasImage:
                 self.__tile[1][3] = h  # set the tile band height
                 self.__tile[2] = self.__offset + self.imwidth * int(y1 / self.imscale) * 3
                 self.__image.close()
-                self.__image = Image.open(self.path)  # reopen / reset image
+                self.__image = image  # reopen / reset image
                 self.__image.size = (self.imwidth, h)  # set size of the tile band
                 self.__image.tile = [self.__tile]
                 image = self.__image.crop((int(x1 / self.imscale), 0, int(x2 / self.imscale), h))
@@ -268,7 +268,7 @@ class CanvasImage:
             self.__tile[1][3] = band  # set the tile height
             self.__tile[2] = self.__offset + self.imwidth * bbox[1] * 3  # set offset of the band
             self.__image.close()
-            self.__image = Image.open(self.path)  # reopen / reset image
+            self.__image = image  # reopen / reset image
             self.__image.size = (self.imwidth, band)  # set size of the tile band
             self.__image.tile = [self.__tile]
             return self.__image.crop((bbox[0], 0, bbox[2], band))
@@ -286,11 +286,11 @@ class CanvasImage:
 
 class MainWindow(ttk.Frame):
     """ Main window class """
-    def __init__(self, mainframe, path, title):
+    def __init__(self, mainframe, image, title):
         """ Initialize the main Frame """
         ttk.Frame.__init__(self, master=mainframe)
         self.master.title(title)
         self.master.rowconfigure(0, weight=1)  # make the CanvasImage widget expandable
         self.master.columnconfigure(0, weight=1)
-        canvas = CanvasImage(self.master, path)  # create widget
+        canvas = CanvasImage(self.master, image)  # create widget
         canvas.grid(row=0, column=0)  # show widget
