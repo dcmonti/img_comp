@@ -11,7 +11,7 @@ from zoom import MainWindow
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title('Jpg Comp')
+        self.title('Img Comp')
         self.resizable(False, False)
         self.geometry('450x300')
 
@@ -34,7 +34,7 @@ class App(tk.Tk):
         self.f_input.pack(pady=5)
 
         # set d parameter
-        self.d_label = tk.Label(self, text="Enter frequency treshold", font=('Calibri 10'))
+        self.d_label = tk.Label(self, text="Enter frequency threshold", font=('Calibri 10'))
         self.d_label.pack()
         self.d = tk.IntVar()
         self.d.set(14)
@@ -114,7 +114,7 @@ class App(tk.Tk):
         elapsed = round(time.time() - start, 2)
 
         tk.messagebox.showinfo(
-            'Job Completed', f'Image saved ({self.alg} compression) in {elapsed}s'
+            'Job Completed', f'Image compressed ({self.alg}) in {elapsed}s'
         )
 
         # build PIL image from matrix
