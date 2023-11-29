@@ -4,6 +4,12 @@
 
 This Python project is a simple application with a graphical user interface (GUI) that implements the Discrete Cosine Transform (DCT2) to compress JPEG images. Users can adjust parameters to balance image quality and file size.
 
+## Usage
+```
+pip install -m requirements.txt
+python main.py
+```
+
 ## Acknowledgments
 
 The project utilizes the following Python libraries:
